@@ -1,0 +1,46 @@
+{
+  "name": "Faizan",
+  "title": "Full-Stack AI & Cloud Engineer",
+  "directory_name": "faizan_portfolio",
+  "bio": "Experienced AI engineer building autonomous multi-agent pipelines, production LLM tooling, and resilient cloud architectures.",
+  "theme": "modern dark mode with neon accents and glassmorphism",
+  "contact_email": "faizan@example.com",
+  "github": "https://github.com",
+  "linkedin": "https://linkedin.com",
+  "skills": [
+    "Python",
+    "TypeScript",
+    "FastAPI",
+    "PyTorch",
+    "Docker",
+    "PostgreSQL",
+    "React",
+    "Next.js",
+    "Kubernetes",
+    "Agentic Workflows"
+  ],
+  "projects": [
+    {
+      "name": "Autonomous Portfolio Agent",
+      "description": "Sandboxed autonomous agent generating complete static portfolios with automated self-healing loops.",
+      "tags": ["Python", "OpenAI Tool Calling", "Sandbox Security"],
+      "github": "https://github.com",
+      "demo": "https://example.com"
+    },
+    {
+      "name": "Real-time Telemetry Dashboard",
+      "description": "High-throughput streaming analytics platform handling 50k WebSocket messages per second.",
+      "tags": ["FastAPI", "WebSockets", "TypeScript", "Redis"],
+      "github": "https://github.com",
+      "demo": "https://example.com"
+    },
+    {
+      "name": "Enterprise RAG Synthesizer",
+      "description": "Context-aware neural search system with hybrid embeddings and citation validation.",
+      "tags": ["PyTorch", "Qdrant", "Python", "Docker"],
+      "github": "https://github.com",
+      "demo": "https://example.com"
+    }
+  ],
+  "extra_instructions": "Make sure the hero section has an eye-catching animated badge and the projects section includes interactive filter buttons."
+}
