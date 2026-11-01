@@ -7,12 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Theme Toggle with LocalStorage Persistence
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = themeToggleBtn.querySelector('.theme-icon');
-    const storedTheme = localStorage.getItem('faizan-portfolio-theme') || 'dark';
+    const storedTheme = localStorage.getItem('portfolio-theme') || 'light';
 
     function applyTheme(theme) {
         document.body.setAttribute('data-theme', theme);
-        themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
-        localStorage.setItem('faizan-portfolio-theme', theme);
+        if (themeIcon) {
+            themeIcon.textContent = theme === 'dark' ? 'Light' : 'Dark';
+        }
+        localStorage.setItem('portfolio-theme', theme);
     }
 
     applyTheme(storedTheme);
@@ -74,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cardCategory = card.getAttribute('data-category');
                 if (filterValue === 'all' || cardCategory === filterValue) {
                     card.style.display = 'flex';
-                    card.style.animation = 'fadeIn 0.4s ease forwards';
                 } else {
                     card.style.display = 'none';
                 }
@@ -100,19 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Simulate form submission
-            formFeedback.textContent = 'Sending message...';
-            formFeedback.style.color = 'var(--accent-primary)';
+            formFeedback.textContent = `Thank you, ${name}! Your message has been sent successfully.`;
+            formFeedback.style.color = '#10b981';
+            contactForm.reset();
 
             setTimeout(() => {
-                formFeedback.textContent = `🚀 Thank you, ${name}! Your message has been sent successfully. I will get back to you within 24 hours.`;
-                formFeedback.style.color = '#10b981';
-                contactForm.reset();
-
-                setTimeout(() => {
-                    formFeedback.textContent = '';
-                }, 6000);
-            }, 800);
+                formFeedback.textContent = '';
+            }, 6000);
         });
     }
 
@@ -120,10 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
-            navbar.style.borderBottomColor = 'var(--border-bright)';
-            navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+            navbar.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.08)';
         } else {
-            navbar.style.borderBottomColor = 'var(--border-subtle)';
             navbar.style.boxShadow = 'none';
         }
     });
