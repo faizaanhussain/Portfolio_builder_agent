@@ -33,7 +33,7 @@ def build_portfolio_prompt(
     contact_email: Optional[str] = None,
     github: Optional[str] = None,
     linkedin: Optional[str] = None,
-    theme: str = "modern dark mode with neon accents and glassmorphism",
+    theme: str = "modern clean light minimalist with subtle slate borders and refined typography (no emoji icons)",
     directory_name: str = "portfolio",
     extra_instructions: Optional[str] = None,
 ) -> str:
@@ -117,8 +117,9 @@ def build_portfolio_prompt(
   6. Interactive Contact Section with functional frontend form validation and direct social links
   7. Footer with copyright and quick navigation links
 - Polish & Responsiveness:
+  - Clean, modern light aesthetic with crisp typography, subtle borders, and soft shadows.
+  - Professional icon representation: Use clean SVG paths or typographical text badges; do NOT use casual emoji characters for buttons, navigation, or decoration.
   - Responsive design that looks flawless on mobile phones, tablets, and desktop displays.
-  - Smooth hover animations, glassmorphism cards, and refined typography.
   - Semantic HTML5, accessible tags, and organized CSS with CSS custom properties (variables).
   - Vanilla JavaScript for mobile hamburger menu toggle, dark/light mode toggle with localStorage persistence, smooth scrolling, and contact form handling.
 

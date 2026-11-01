@@ -56,10 +56,24 @@ class PortfolioAgent:
                 from openai import OpenAI
 
                 client_kwargs: Dict[str, Any] = {}
-                if self.config.api_key:
-                    client_kwargs["api_key"] = self.config.api_key
-                if self.config.base_url:
-                    client_kwargs["base_url"] = self.config.base_url
+                api_key = self.config.api_key
+                base_url = self.config.base_url
+
+                # Auto-route Groq keys to Groq API
+                if api_key and api_key.startswith("gsk_") and (not base_url or "api.openai.com" in base_url):
+                    base_url = "https://api.groq.com/openai/v1"
+                elif api_key and api_key.startswith("sk-or-") and (not base_url or "api.openai.com" in base_url):
+                    base_url = "https://openrouter.ai/api/v1"
+
+                if api_key:
+                    client_kwargs["api_key"] = api_key
+                if base_url:
+                    client_kwargs["base_url"] = base_url
+                if base_url and "openrouter.ai" in str(base_url):
+                    client_kwargs["default_headers"] = {
+                        "HTTP-Referer": "http://localhost:8000",
+                        "X-Title": "Portfolio Agent",
+                    }
 
                 self._client = OpenAI(**client_kwargs)
             except ImportError as err:
@@ -76,7 +90,9 @@ class PortfolioAgent:
         """
         Execute the agent loop until the website is completely created or max_turns is reached.
         """
+        active_url = self.config.base_url or "https://api.openai.com/v1"
         self.logger.header(f"Starting Website Creation Agent ({self.config.model})")
+        self.logger.info(f"LLM Provider: {active_url}")
         self.logger.info(f"Workspace Directory: {self.workspace.website_workspace}")
 
         messages: List[Dict[str, Any]] = [
@@ -101,12 +117,47 @@ class PortfolioAgent:
                     temperature=self.config.temperature,
                 )
             except Exception as err:
-                self.logger.error(f"API request failed: {err}")
-                return AgentResult(
-                    success=False,
-                    total_turns=turn,
-                    error_message=str(err),
-                )
+                err_str = str(err)
+                if ("404" in err_str or "does not exist" in err_str) and turn == 1:
+                    try:
+                        valid_models = sorted([m.id for m in self.client.models.list().data if getattr(m, 'id', None)])
+                        self.logger.warning(
+                            f"Model '{self.config.model}' not found on provider. Available models on your account:\n"
+                            f"  {', '.join(valid_models)}"
+                        )
+                        # Pick best available candidate
+                        candidates = [
+                            m for m in valid_models
+                            if any(k in m.lower() for k in ("llama", "mixtral", "gemma", "gpt"))
+                            and not any(ex in m.lower() for ex in ("whisper", "embed", "guard", "vision", "bfloat"))
+                        ]
+                        if candidates:
+                            fallback_model = candidates[0]
+                            self.logger.info(f"Auto-recovering: Switching to active model '{fallback_model}'...")
+                            self.config.model = fallback_model
+                            response = self.client.chat.completions.create(
+                                model=fallback_model,
+                                messages=messages,
+                                tools=self.tools,
+                                tool_choice="auto",
+                                temperature=self.config.temperature,
+                            )
+                        else:
+                            raise err
+                    except Exception as retry_err:
+                        self.logger.error(f"API request failed: {retry_err}")
+                        return AgentResult(
+                            success=False,
+                            total_turns=turn,
+                            error_message=str(retry_err),
+                        )
+                else:
+                    self.logger.error(f"API request failed: {err}")
+                    return AgentResult(
+                        success=False,
+                        total_turns=turn,
+                        error_message=str(err),
+                    )
 
             choice = response.choices[0]
             message = choice.message

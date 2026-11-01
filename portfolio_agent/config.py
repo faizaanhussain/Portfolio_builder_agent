@@ -12,8 +12,8 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
-# Automatically load .env file if present
-load_dotenv()
+# Automatically load .env file if present, overriding any pre-existing environment variables
+load_dotenv(override=True)
 
 
 @dataclass
@@ -31,7 +31,8 @@ class Config:
     )
     workspace_dir: Path = field(
         default_factory=lambda: Path(
-            os.getenv("WORKSPACE_DIR", "./generated_sites")
+            os.getenv("WORKSPACE_DIR")
+            or ("/tmp/generated_sites" if os.getenv("VERCEL") else "./generated_sites")
         ).resolve()
     )
     max_turns: int = field(
@@ -46,6 +47,17 @@ class Config:
     preview_port: int = field(
         default_factory=lambda: int(os.getenv("PREVIEW_PORT", "8000"))
     )
+
+    def __post_init__(self) -> None:
+        """Auto-configure known provider endpoints based on key signatures."""
+        if self.api_key and self.api_key.startswith("gsk_"):
+            if not self.base_url or "api.openai.com" in self.base_url:
+                self.base_url = "https://api.groq.com/openai/v1"
+            if not self.model or self.model.startswith("gpt-"):
+                self.model = "llama-3.3-70b-versatile"
+        elif self.api_key and self.api_key.startswith("sk-or-"):
+            if not self.base_url or "api.openai.com" in self.base_url:
+                self.base_url = "https://openrouter.ai/api/v1"
 
     def validate(self) -> None:
         """Validate configuration values."""

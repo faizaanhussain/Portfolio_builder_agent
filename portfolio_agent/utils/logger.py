@@ -43,7 +43,7 @@ class AgentLogger:
     @staticmethod
     def tool_call(name: str, args_summary: str) -> None:
         print(
-            f"  {Fore.YELLOW}⚡ Calling Tool:{Style.RESET_ALL} "
+            f"  {Fore.YELLOW}[TOOL]{Style.RESET_ALL} "
             f"{Fore.YELLOW}{Style.BRIGHT}{name}{Style.RESET_ALL} "
             f"{Fore.WHITE}({args_summary}){Style.RESET_ALL}"
         )
@@ -56,24 +56,24 @@ class AgentLogger:
         else:
             preview = "\n".join(f"    │ {line}" for line in lines[:max_lines])
             preview += f"\n    │ ... (+{len(lines) - max_lines} more lines)"
-        print(f"  {Fore.GREEN}✔ Result:{Style.RESET_ALL}\n{preview}")
+        print(f"  {Fore.GREEN}[RESULT]{Style.RESET_ALL}\n{preview}")
 
     @staticmethod
     def agent_message(content: str) -> None:
-        print(f"\n{Fore.MAGENTA}🤖 Agent:{Style.RESET_ALL}\n{content}\n")
+        print(f"\n{Fore.MAGENTA}[AGENT]{Style.RESET_ALL}\n{content}\n")
 
     @staticmethod
     def success(message: str) -> None:
-        print(f"\n{Fore.GREEN}{Style.BRIGHT}✨ SUCCESS: {message}{Style.RESET_ALL}")
+        print(f"\n{Fore.GREEN}{Style.BRIGHT}[SUCCESS] {message}{Style.RESET_ALL}")
 
     @staticmethod
     def info(message: str) -> None:
-        print(f"{Fore.CYAN}ℹ {message}{Style.RESET_ALL}")
+        print(f"{Fore.CYAN}[INFO] {message}{Style.RESET_ALL}")
 
     @staticmethod
     def warning(message: str) -> None:
-        print(f"{Fore.YELLOW}⚠ {message}{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}[WARNING] {message}{Style.RESET_ALL}")
 
     @staticmethod
     def error(message: str) -> None:
-        print(f"{Fore.RED}{Style.BRIGHT}✖ ERROR: {message}{Style.RESET_ALL}", file=sys.stderr)
+        print(f"{Fore.RED}{Style.BRIGHT}[ERROR] {message}{Style.RESET_ALL}", file=sys.stderr)

@@ -41,9 +41,10 @@ def serve_directory(
         with socketserver.TCPServer((host, port), handler) as httpd:
             url = f"http://{host}:{port}"
             print("\n" + "=" * 60)
-            print(f"  🚀 Portfolio Live Preview Server Running")
-            print(f"  📁 Serving Directory: {directory}")
-            print(f"  🔗 Local URL:        {url}")
+            print(f"  Portfolio Live Preview Server Running")
+            print(f"  Serving Directory: {directory}")
+            print(f"  Local URL:        {url}")
+            print(f"  Tip: To launch the full Web Studio UI, run: python web_server.py")
             print("  Press Ctrl+C to stop the server")
             print("=" * 60 + "\n")
 
