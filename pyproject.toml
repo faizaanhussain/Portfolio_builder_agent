@@ -35,6 +35,10 @@ dev = [
 
 [project.scripts]
 portfolio-agent = "main:main"
+portfolio-studio = "web_server:main"
+
+[tool.setuptools.package-data]
+"portfolio_agent.web" = ["static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

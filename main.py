@@ -80,7 +80,7 @@ def run_mock_simulation(workspace: Workspace, dir_name: str, name: str, title: s
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body data-theme="dark">
+<body data-theme="light">
     <!-- Navigation -->
     <header class="navbar">
         <div class="nav-container">
@@ -90,7 +90,7 @@ def run_mock_simulation(workspace: Workspace, dir_name: str, name: str, title: s
                 <a href="#skills">Skills</a>
                 <a href="#projects">Projects</a>
                 <a href="#contact">Contact</a>
-                <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">🌙</button>
+                <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">Dark</button>
             </nav>
         </div>
     </header>
@@ -98,7 +98,7 @@ def run_mock_simulation(workspace: Workspace, dir_name: str, name: str, title: s
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div class="badge">🚀 Available for new opportunities</div>
+            <div class="badge">Available for new opportunities</div>
             <h1 class="hero-title">Hi, I'm <span class="gradient-text">{name}</span></h1>
             <p class="hero-subtitle">{title}</p>
             <p class="hero-desc">Building resilient, intelligent web systems and autonomous AI solutions with modern architecture.</p>
@@ -565,16 +565,16 @@ body {
 document.addEventListener('DOMContentLoaded', () => {
     // Theme Switcher with localStorage persistence
     const themeBtn = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem('portfolio-theme') || 'dark';
+    const savedTheme = localStorage.getItem('portfolio-theme') || 'light';
     document.body.setAttribute('data-theme', savedTheme);
-    themeBtn.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+    themeBtn.textContent = savedTheme === 'dark' ? 'Light' : 'Dark';
 
     themeBtn.addEventListener('click', () => {
         const currentTheme = document.body.getAttribute('data-theme');
         const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.body.setAttribute('data-theme', nextTheme);
         localStorage.setItem('portfolio-theme', nextTheme);
-        themeBtn.textContent = nextTheme === 'dark' ? '🌙' : '☀️';
+        themeBtn.textContent = nextTheme === 'dark' ? 'Light' : 'Dark';
     });
 
     // Smooth Scrolling for Navigation
@@ -597,7 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (contactForm && formStatus) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            formStatus.textContent = '🚀 Thank you! Your message has been sent successfully.';
+            formStatus.textContent = 'Thank you! Your message has been sent successfully.';
             formStatus.style.color = '#10b981';
             contactForm.reset();
             setTimeout(() => {
@@ -626,6 +626,7 @@ def main() -> int:
     parser.add_argument("--config-file", type=str, default=None, help="Path to JSON profile configuration")
     parser.add_argument("--model", type=str, default=None, help="LLM model (e.g. gpt-4o, gpt-4o-mini)")
     parser.add_argument("-i", "--interactive", action="store_true", help="Launch interactive setup wizard")
+    parser.add_argument("--web", "--studio", action="store_true", help="Launch the interactive Web Studio frontend in browser")
     parser.add_argument("--serve", "--preview", action="store_true", help="Preview website in browser after generation")
     parser.add_argument("--port", type=int, default=8000, help="Local preview server port (default: 8000)")
     parser.add_argument("--mock", action="store_true", help="Run in mock mode without calling external LLM API")
@@ -641,6 +642,19 @@ def main() -> int:
         config.preview_port = args.port
 
     workspace = Workspace(config.workspace_dir)
+
+    # 0. Handle Web Studio Launch
+    if args.web:
+        from portfolio_agent.web.server import start_web_server
+
+        start_web_server(
+            host=config.preview_host,
+            port=config.preview_port,
+            open_browser=True,
+            workspace=workspace,
+            config=config,
+        )
+        return 0
 
     # 1. Handle Mock Mode
     if args.mock:

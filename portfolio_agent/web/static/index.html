@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FolioPilot — Autonomous Portfolio Builder</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="light">
+    <!-- Studio Header -->
+    <header class="studio-header">
+        <div class="header-left">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                </div>
+                <div class="brand-text">
+                    <h1>FolioPilot</h1>
+                    <span class="brand-tag">Portfolio Studio</span>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="status-badge" id="agent-status-badge">
+                    <span class="status-dot"></span>
+                    <span id="agent-status-text">Ready</span>
+                </span>
+                <span class="model-badge" id="header-model-badge" title="Active Model">
+                    <span class="model-badge-icon">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+                    </span>
+                    <span id="header-model-name">gpt-4o-mini</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <button class="nav-btn" id="open-gallery-btn" title="View all locally generated portfolio websites">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <span>Sites Library</span>
+                <span class="badge-count" id="sites-count-badge">0</span>
+            </button>
+            <button class="nav-btn" id="reset-form-btn" title="Start a fresh portfolio">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>New Site</span>
+            </button>
+            <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+                <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Studio Workspace -->
+    <main class="studio-main">
+        <!-- Left Pane: Prompt & Generator Controls -->
+        <section class="studio-pane left-pane">
+            <div class="pane-header">
+                <div class="mode-switcher" role="tablist">
+                    <button class="mode-tab active" id="tab-mode-prompt" data-mode="prompt">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>Prompt Studio</span>
+                    </button>
+                    <button class="mode-tab" id="tab-mode-wizard" data-mode="wizard">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                        <span>Guided Wizard</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pane-content">
+                <!-- Mode 1: Natural Prompt -->
+                <div class="mode-section active" id="section-prompt-mode">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="prompt-name">Your Full Name</label>
+                            <input type="text" id="prompt-name" placeholder="e.g. John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="prompt-title">Professional Title</label>
+                            <input type="text" id="prompt-title" placeholder="e.g. Full-Stack Engineer">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="prompt-input">Portfolio Specification Prompt</label>
+                            <span class="label-hint">Describe desired design & content</span>
+                        </div>
+                        <textarea id="prompt-input" rows="5" placeholder="Describe your portfolio in natural language...&#10;&#10;e.g. Build a clean modern portfolio for John Doe, Full-Stack Engineer featuring a minimalist hero section, technical projects with live demo links, and an interactive contact form."></textarea>
+                    </div>
+
+                    <!-- Prompt Preset Chips -->
+                    <div class="presets-section">
+                        <span class="presets-title">Quick Presets</span>
+                        <div class="preset-chips">
+                            <button type="button" class="preset-chip" data-preset="ai-engineer">
+                                AI / ML Systems Engineer
+                            </button>
+                            <button type="button" class="preset-chip" data-preset="frontend-dev">
+                                Frontend Architect & UI Engineer
+                            </button>
+                            <button type="button" class="preset-chip" data-preset="devops-cloud">
+                                Cloud & DevOps Architect
+                            </button>
+                            <button type="button" class="preset-chip" data-preset="cybersecurity">
+                                Security Researcher & Systems
+                            </button>
+                            <button type="button" class="preset-chip" data-preset="minimal-executive">
+                                Technical Lead & Advisor
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prompt-target-dir">Target Directory Name</label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">generated_sites/</span>
+                            <input type="text" id="prompt-target-dir" placeholder="my_portfolio" value="my_portfolio">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mode 2: Guided Wizard -->
+                <div class="mode-section" id="section-wizard-mode">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="wizard-name">Full Name *</label>
+                            <input type="text" id="wizard-name" placeholder="e.g. John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="wizard-title">Professional Title *</label>
+                            <input type="text" id="wizard-title" placeholder="e.g. Full-Stack Engineer">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wizard-dir">Target Directory Name</label>
+                        <div class="input-with-prefix">
+                            <span class="input-prefix">generated_sites/</span>
+                            <input type="text" id="wizard-dir" placeholder="my_portfolio" value="my_portfolio">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wizard-bio">Bio / Headline Summary</label>
+                        <textarea id="wizard-bio" rows="2" placeholder="Tell the world about your technical background and philosophy...">Passionate engineer building autonomous systems, distributed cloud architectures, and modern reactive web applications.</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Key Skills & Technologies</label>
+                        <div class="skills-input-container">
+                            <div class="skills-chips" id="wizard-skills-container"></div>
+                            <div class="skill-add-row">
+                                <input type="text" id="skill-input" placeholder="Type a skill and press Enter...">
+                                <button type="button" id="add-skill-btn" class="btn-subtle">+ Add</button>
+                            </div>
+                        </div>
+                        <div class="quick-skills">
+                            <span class="quick-title">Popular:</span>
+                            <button type="button" class="quick-skill-tag" data-skill="Python">+ Python</button>
+                            <button type="button" class="quick-skill-tag" data-skill="TypeScript">+ TypeScript</button>
+                            <button type="button" class="quick-skill-tag" data-skill="React">+ React</button>
+                            <button type="button" class="quick-skill-tag" data-skill="FastAPI">+ FastAPI</button>
+                            <button type="button" class="quick-skill-tag" data-skill="PyTorch">+ PyTorch</button>
+                            <button type="button" class="quick-skill-tag" data-skill="Docker">+ Docker</button>
+                            <button type="button" class="quick-skill-tag" data-skill="Tailwind CSS">+ Tailwind</button>
+                        </div>
+                    </div>
+
+                    <!-- Theme Selector -->
+                    <div class="form-group">
+                        <label>Design Style & Theme</label>
+                        <div class="theme-cards-grid" id="theme-selector-grid">
+                            <label class="theme-card active">
+                                <input type="radio" name="wizard-theme" value="Modern Clean Light Minimalist with Slate Accents" checked>
+                                <div class="theme-preview-swatch clean-light"></div>
+                                <span class="theme-name">Clean Modern Light</span>
+                            </label>
+                            <label class="theme-card">
+                                <input type="radio" name="wizard-theme" value="Executive Monochrome with High Contrast">
+                                <div class="theme-preview-swatch minimal-mono"></div>
+                                <span class="theme-name">Monochrome Slate</span>
+                            </label>
+                            <label class="theme-card">
+                                <input type="radio" name="wizard-theme" value="Refined Indigo Studio with Subtle Depth">
+                                <div class="theme-preview-swatch indigo-light"></div>
+                                <span class="theme-name">Indigo Studio</span>
+                            </label>
+                            <label class="theme-card">
+                                <input type="radio" name="wizard-theme" value="Modern Dark Glassmorphic with Subtle Accents">
+                                <div class="theme-preview-swatch glass-dark"></div>
+                                <span class="theme-name">Dark Mode</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Projects Section in Wizard -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label>Featured Projects</label>
+                            <button type="button" class="btn-text-link" id="add-project-btn">+ Add Project</button>
+                        </div>
+                        <div class="projects-list" id="wizard-projects-list"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="wizard-email">Contact Email</label>
+                            <input type="email" id="wizard-email" placeholder="e.g. john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="wizard-github">GitHub URL</label>
+                            <input type="url" id="wizard-github" placeholder="e.g. https://github.com/username">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engine & Advanced Configuration (Collapsible) -->
+                <div class="accordion-item" id="accordion-settings">
+                    <button type="button" class="accordion-header" id="toggle-settings-btn">
+                        <span class="accordion-title">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            <span>Engine Configuration</span>
+                        </span>
+                        <svg class="accordion-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="accordion-body" id="settings-accordion-body">
+                        <!-- Mode toggle: Mock vs Real Agent -->
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-name">Mock Simulation Mode</span>
+                                <span class="setting-desc">Generate inside sandbox without external API calls</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="mock-mode-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="setting-model">LLM Model</label>
+                                <select id="setting-model">
+                                    <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Groq — Free & Ultra-Fast)</option>
+                                    <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile (Groq)</option>
+                                    <option value="llama3-70b-8192">llama3-70b-8192 (Groq)</option>
+                                    <option value="gpt-4o-mini">gpt-4o-mini (OpenAI)</option>
+                                    <option value="gpt-4o">gpt-4o (OpenAI)</option>
+                                    <option value="deepseek-chat">deepseek-chat</option>
+                                    <option value="custom">Custom Model ID...</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="custom-model-group" style="display: none;">
+                                <label for="setting-custom-model">Custom Model Identifier</label>
+                                <input type="text" id="setting-custom-model" placeholder="e.g. meta-llama/Meta-Llama-3-70B">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="setting-api-key">OpenAI / Compatible API Key (Optional)</label>
+                            <input type="password" id="setting-api-key" placeholder="sk-... (Leave empty to use server environment key)">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="setting-base-url">Custom Base URL (Optional)</label>
+                            <input type="text" id="setting-base-url" placeholder="e.g. https://api.groq.com/openai/v1 or http://localhost:11434/v1">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="setting-turns">Max Agent Turns: <span id="turns-val">25</span></label>
+                                <input type="range" id="setting-turns" min="5" max="35" value="25">
+                            </div>
+                            <div class="form-group">
+                                <label for="setting-temp">Temperature: <span id="temp-val">0.7</span></label>
+                                <input type="range" id="setting-temp" min="0" max="1" step="0.1" value="0.7">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generate Action Footer -->
+            <div class="pane-footer">
+                <button type="button" class="btn-generate" id="generate-btn">
+                    <span class="btn-generate-content">
+                        <span class="btn-spinner" id="btn-spinner"></span>
+                        <svg class="btn-icon" id="btn-rocket-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <span id="btn-label">Generate Portfolio Website</span>
+                    </span>
+                    <span class="btn-shortcut">Ctrl+Enter</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Pane: Live Agent Hub & Hosted Preview -->
+        <section class="studio-pane right-pane">
+            <div class="pane-header tabs-header">
+                <div class="studio-tabs" role="tablist">
+                    <button class="studio-tab active" id="tab-live-agent" data-tab="agent">
+                        <span class="tab-indicator" id="agent-tab-indicator"></span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                        <span>Agent Stream</span>
+                    </button>
+                    <button class="studio-tab" id="tab-preview" data-tab="preview">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        <span>Live Preview</span>
+                    </button>
+                    <button class="studio-tab" id="tab-code" data-tab="code">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        <span>Code & Files</span>
+                    </button>
+                    <button class="studio-tab" id="tab-export" data-tab="export">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>Export</span>
+                    </button>
+                </div>
+
+                <div class="header-actions" id="preview-device-actions" style="display: none;">
+                    <!-- Viewport switcher for preview -->
+                    <div class="device-bar">
+                        <button class="device-btn active" data-device="desktop" title="Desktop View (100%)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </button>
+                        <button class="device-btn" data-device="laptop" title="Laptop View (1024px)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg>
+                        </button>
+                        <button class="device-btn" data-device="tablet" title="Tablet View (768px)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                        </button>
+                        <button class="device-btn" data-device="mobile" title="Mobile View (375px)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                        </button>
+                    </div>
+                    <button class="action-btn" id="rotate-device-btn" title="Rotate Orientation">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    </button>
+                    <button class="action-btn" id="reload-preview-btn" title="Reload Website Preview">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                    </button>
+                    <a href="#" target="_blank" class="action-btn open-tab-btn" id="open-new-tab-btn" title="Open locally hosted portfolio in real browser tab">
+                        <span>Open Tab</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="pane-content right-content">
+                <!-- Tab 1: Live Agent Stream -->
+                <div class="tab-view active" id="view-agent">
+                    <!-- Progress Tracker Bar -->
+                    <div class="agent-progress-box">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="agent-progress-bar" style="width: 0%;"></div>
+                        </div>
+                        <div class="milestones-row">
+                            <div class="milestone" id="ms-init">
+                                <span class="ms-dot"></span>
+                                <span class="ms-label">Initialize</span>
+                            </div>
+                            <div class="milestone" id="ms-dir">
+                                <span class="ms-dot"></span>
+                                <span class="ms-label">Scaffold</span>
+                            </div>
+                            <div class="milestone" id="ms-html">
+                                <span class="ms-dot"></span>
+                                <span class="ms-label">HTML Structure</span>
+                            </div>
+                            <div class="milestone" id="ms-css">
+                                <span class="ms-dot"></span>
+                                <span class="ms-label">CSS Styles</span>
+                            </div>
+                            <div class="milestone" id="ms-js">
+                                <span class="ms-dot"></span>
+                                <span class="ms-label">JavaScript</span>
+                            </div>
+                            <div class="milestone" id="ms-verify">
+                                <span class="ms-dot"></span>
+                                <span class="ms-label">Verify & Host</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Agent Step Card -->
+                    <div class="agent-thought-card" id="agent-thought-card" style="display: none;">
+                        <div class="thought-header">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+                            <span class="thought-title">Agent Reasoning</span>
+                        </div>
+                        <div class="thought-content" id="agent-thought-text"></div>
+                    </div>
+
+                    <!-- Terminal Output Console -->
+                    <div class="terminal-box">
+                        <div class="terminal-bar">
+                            <div class="term-left">
+                                <span class="term-status-indicator"></span>
+                                <span class="term-title">Execution Console</span>
+                            </div>
+                            <div class="term-actions">
+                                <button type="button" class="term-btn" id="clear-log-btn">Clear</button>
+                                <button type="button" class="term-btn" id="autoscroll-toggle-btn">Auto-scroll: ON</button>
+                            </div>
+                        </div>
+                        <div class="terminal-logs" id="terminal-logs">
+                            <div class="log-line log-system">[READY] Studio engine initialized. Enter a prompt and click Generate.</div>
+                        </div>
+                    </div>
+
+                    <!-- Ready Banner when website is finished -->
+                    <div class="ready-banner" id="ready-banner" style="display: none;">
+                        <div class="ready-content">
+                            <div class="ready-icon-box">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
+                            <div class="ready-text">
+                                <h3>Website Generated & Hosted Locally</h3>
+                                <p id="ready-site-desc">Your portfolio is active in the local sandbox workspace.</p>
+                            </div>
+                        </div>
+                        <div class="ready-actions">
+                            <button type="button" class="btn btn-primary" id="view-preview-btn">
+                                <span>Open Live Preview</span>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            </button>
+                            <a href="#" target="_blank" class="btn btn-secondary" id="ready-external-btn">
+                                <span>Open in Tab</span>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Live Preview (Hosted Locally) -->
+                <div class="tab-view" id="view-preview">
+                    <!-- URL Preview Bar -->
+                    <div class="preview-url-bar">
+                        <span class="url-badge">SITE</span>
+                        <select id="preview-site-select" class="preview-site-select" title="Switch generated site"></select>
+                        <div class="url-display">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span id="preview-url-text">http://localhost:8000/preview/my_portfolio/</span>
+                        </div>
+                        <button class="copy-url-btn" id="copy-preview-url-btn" title="Copy URL">Copy</button>
+                    </div>
+
+                    <!-- Embedded Viewport Frame -->
+                    <div class="preview-viewport-container" id="preview-viewport-container">
+                        <div class="device-frame desktop" id="device-frame">
+                            <iframe id="preview-iframe" src="about:blank" title="Live Portfolio Website Preview"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Code & Files Inspector -->
+                <div class="tab-view" id="view-code">
+                    <div class="code-inspector">
+                        <div class="files-sidebar">
+                            <div class="files-header">Files</div>
+                            <div class="files-list" id="code-files-list"></div>
+                        </div>
+                        <div class="code-editor-pane">
+                            <div class="editor-header">
+                                <span class="editor-filename" id="current-code-filename">index.html</span>
+                                <div class="editor-actions">
+                                    <button type="button" class="editor-btn" id="copy-code-btn">Copy</button>
+                                    <button type="button" class="editor-btn primary" id="save-code-btn">Save & Refresh</button>
+                                </div>
+                            </div>
+                            <textarea id="code-editor-textarea" spellcheck="false"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Export & Deployment -->
+                <div class="tab-view" id="view-export">
+                    <div class="export-view-container">
+                        <div class="export-card">
+                            <h2>Download Deliverables</h2>
+                            <p>Download the standalone production package with clean HTML5, CSS3, and vanilla JS.</p>
+                            <div class="site-stats-row">
+                                <div class="site-stat">
+                                    <span class="stat-val" id="export-stat-files">-</span>
+                                    <span class="stat-lbl">Files</span>
+                                </div>
+                                <div class="site-stat">
+                                    <span class="stat-val" id="export-stat-size">-</span>
+                                    <span class="stat-lbl">Size</span>
+                                </div>
+                                <div class="site-stat">
+                                    <span class="stat-val" id="export-stat-dir">-</span>
+                                    <span class="stat-lbl">Directory</span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-large" id="download-zip-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>Download Portfolio (.ZIP)</span>
+                            </button>
+                        </div>
+
+                        <div class="export-card">
+                            <h2>Hosting & Deployment</h2>
+                            <div class="deploy-options">
+                                <div class="deploy-item">
+                                    <h3>1. Vercel (1-Click Deployment)</h3>
+                                    <p>Run <code>npx vercel generated_sites/&lt;your_dir&gt;</code> or upload the unzipped folder at vercel.com/new.</p>
+                                </div>
+                                <div class="deploy-item">
+                                    <h3>2. GitHub Pages</h3>
+                                    <p>Push your generated folder to a GitHub repository and turn on GitHub Pages in repository settings.</p>
+                                </div>
+                                <div class="deploy-item">
+                                    <h3>3. Local Preview Server</h3>
+                                    <p>Run <code>python preview_server.py --dir generated_sites/&lt;your_dir&gt;</code> to re-host locally anytime.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Slide-Over Sites Gallery Drawer / Modal -->
+    <div class="modal-overlay" id="gallery-modal" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Generated Portfolios</h2>
+                <button type="button" class="modal-close-btn" id="close-gallery-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">All websites currently stored inside <code>generated_sites/</code>:</p>
+                <div class="sites-grid" id="gallery-sites-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
