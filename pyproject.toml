@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Autonomous AI Agent that designs and builds complete responsive portfolio websites inside a secure sandbox."
 readme = "README.md"
 authors = [{ name = "Portfolio Agent Team" }]
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -16,7 +16,6 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Code Generators",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -36,6 +35,9 @@ dev = [
 [project.scripts]
 portfolio-agent = "main:main"
 portfolio-studio = "web_server:main"
+
+[tool.setuptools.packages.find]
+include = ["portfolio_agent*"]
 
 [tool.setuptools.package-data]
 "portfolio_agent.web" = ["static/*"]
