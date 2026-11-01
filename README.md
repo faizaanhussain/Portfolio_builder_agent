@@ -1,6 +1,6 @@
-# 🌐 Portfolio AI Agent
+# 🌐 FolioPilot — Autonomous Portfolio Builder
 
-> **An autonomous, tool-calling AI agent that designs, codes, and refines complete, responsive portfolio websites inside a secure sandbox environment.**
+> **An autonomous, tool-calling AI agent and web studio that designs, codes, and refines complete, responsive portfolio websites inside a secure sandbox environment.**
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -75,13 +75,15 @@ All file operations are strictly confined within a **sandboxed workspace** (`gen
 
 ## ✨ Key Features
 
+- **Interactive Web Studio Frontend**: Modern, responsive browser interface where users can write prompts, choose templates, watch live agent streaming turns, and interact with the locally hosted preview in real time.
 - **Autonomous Agentic Loop**: The agent plans, generates, inspects, and refines web deliverables across multiple reasoning turns.
 - **Strict Sandbox Security**: Protects against path traversal attacks (`../`, nested parent escaping, absolute host paths). The agent cannot access or modify any file outside the designated workspace.
 - **Production-Ready Deliverables**: Built strictly using modern **HTML5, CSS3, and vanilla JavaScript** with responsive grids, flexbox, glassmorphism, mobile navigation drawers, and dark/light mode toggles with `localStorage` persistence.
+- **Multi-Device Live Preview**: Embedded responsive viewport switcher (Desktop, Laptop, Tablet, Mobile) with direct local hosting (`http://localhost:8000/preview/<site_name>/`).
+- **In-Browser Code Inspector**: Inspect generated `index.html`, `style.css`, and `script.js` files with syntax formatting and live edit/save capabilities.
 - **Provider Agnostic**: Works out of the box with **OpenAI** (`gpt-4o`, `gpt-4o-mini`), **Groq**, **DeepSeek**, **OpenRouter**, and local **Ollama** models via the OpenAI-compatible function-calling API.
-- **Interactive CLI Wizard**: Easily input your name, bio, skills, and portfolio style preferences with interactive terminal prompts.
-- **Built-in Live Preview**: Launch a local web server (`--serve`) that automatically opens your newly created portfolio in your default browser.
 - **Mock Simulation Mode**: Run the agent pipeline without an API key using `--mock` for local demonstrations and testing.
+- **1-Click ZIP Export**: Download your completed portfolio folder directly as a clean `.zip` archive ready for deployment on GitHub Pages, Vercel, or Netlify.
 
 ---
 
@@ -97,12 +99,22 @@ Portfolio_Agent/
 ├── requirements.txt            # Python dependencies
 ├── main.py                     # Main CLI application entry point
 ├── preview_server.py           # Local HTTP server for viewing generated websites
+├── web_server.py               # Web Studio entry point for interactive browser UI
 │
 ├── portfolio_agent/            # Core Python package
 │   ├── __init__.py             # Package exports
 │   ├── config.py               # Environment configuration & settings manager
 │   ├── agent.py                # Autonomous agent loop & conversation manager
 │   ├── prompts.py              # WEBSITE_SYSTEM_PROMPT & user prompt builders
+│   │
+│   ├── web/                    # Web Studio frontend & server engine
+│   │   ├── __init__.py
+│   │   ├── server.py           # HTTP server, REST API, SSE streaming & local hosting
+│   │   ├── runner.py           # Multi-threaded job manager & mock simulation
+│   │   └── static/             # Frontend Single-Page Application
+│   │       ├── index.html      # Modern Studio HTML layout
+│   │       ├── style.css       # Dark/Light theme, glassmorphism, responsive styles
+│   │       └── app.js          # Studio app logic, SSE streams, device preview & editor
 │   │
 │   ├── sandbox/                # Security sandbox layer
 │   │   ├── __init__.py
@@ -133,7 +145,8 @@ Portfolio_Agent/
     ├── __init__.py
     ├── test_sandbox.py         # Sandbox security & path traversal tests
     ├── test_tools.py           # Tool schema & execution tests
-    └── test_agent.py           # Agent configuration & prompt tests
+    ├── test_agent.py           # Agent configuration & prompt tests
+    └── test_web.py             # Web server, REST API & local hosting tests
 ```
 
 ---
@@ -236,14 +249,29 @@ OPENAI_MODEL=llama3.1
 
 ## 💻 Usage
 
-### 1. Interactive Terminal Wizard
-The easiest way to generate your portfolio:
+### 1. Interactive Web Studio (Recommended)
+Launch the full web frontend studio in your browser:
+```bash
+python web_server.py
+# Or launch through main.py:
+python main.py --web
+```
+- Open `http://localhost:8000` in your browser.
+- Write a natural prompt or use the guided wizard.
+- Choose from 1-click prompt presets (AI Engineer, Creative Frontend, DevOps, etc.).
+- Watch the agent build your site live turn-by-turn with tool-calling logs.
+- Preview your site live in the embedded multi-device simulator (Desktop, Laptop, Tablet, Mobile).
+- Inspect and edit `index.html`, `style.css`, and `script.js` with live auto-refresh.
+- Download your completed portfolio as a ZIP package.
+
+### 2. Interactive Terminal Wizard
+The terminal-based wizard:
 ```bash
 python main.py -i --serve
 ```
 This wizard will ask for your name, title, bio, key skills, and design preferences, then generate your site and launch the browser preview.
 
-### 2. Command Line Arguments
+### 3. Command Line Arguments
 ```bash
 python main.py \
   --name "Alex Morgan" \
@@ -254,13 +282,13 @@ python main.py \
   --serve
 ```
 
-### 3. Generate from a JSON Profile
+### 4. Generate from a JSON Profile
 Fill out your details in `examples/profile_template.json` and run:
 ```bash
 python main.py --config-file examples/profile_template.json --serve
 ```
 
-### 4. Direct Custom Prompt
+### 5. Direct Custom Prompt
 ```bash
 python main.py \
   --dir "cybersec_portfolio" \
@@ -268,13 +296,15 @@ python main.py \
   --serve
 ```
 
-### 5. Mock Simulation (No API Key Required)
+### 6. Mock Simulation (No API Key Required)
 Experience the sandbox generation pipeline locally without spending API credits:
 ```bash
 python main.py --mock --serve
+# Or launch the Web Studio directly in Mock mode:
+python web_server.py
 ```
 
-### 6. Preview an Existing Generated Website
+### 7. Preview an Existing Generated Website
 ```bash
 python preview_server.py --dir ./generated_sites/sample_portfolio --port 8000
 ```
